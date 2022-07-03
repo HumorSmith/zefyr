@@ -91,7 +91,7 @@ class EditorTextSelectionOverlay {
 
   /// The delegate for manipulating the current selection in the owning
   /// text field.
-  final TextSelectionDelegate? selectionDelegate;
+  TextSelectionDelegate? selectionDelegate;
 
   /// Determines the way that drag start behavior is handled.
   ///
@@ -368,8 +368,8 @@ class EditorTextSelectionOverlay {
         break;
     }
     // TODO: update to use userUpdateTextEditingValue
-    selectionDelegate!.textEditingValue =
-        _value.copyWith(selection: newSelection, composing: TextRange.empty);
+    selectionDelegate?.userUpdateTextEditingValue(
+        _value.copyWith(selection: newSelection, composing: TextRange.empty),SelectionChangedCause.tap);
     selectionDelegate!.bringIntoView(textPosition);
   }
 }
