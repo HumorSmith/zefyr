@@ -11,7 +11,8 @@ dependencies:
   coverage: ^1.0.3
   quill_delta: ^3.0.0-nullsafety.1
   quiver: ^3.0.1
-
+  markdown:
+    path: ../markdown
 dev_dependencies:
   test: ^1.10.0
   lints: ^1.0.1

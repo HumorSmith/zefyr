@@ -18,7 +18,7 @@ class _ScrollableLayoutState extends State<ScrollableLayout> {
   @override
   Widget build(BuildContext context) {
     return DemoScaffold(
-      documentFilename: 'layout_scrollable.note',
+      documentFilename: 'layout_scrollable.json',
       builder: _buildContent,
     );
   }

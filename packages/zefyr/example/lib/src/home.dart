@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadFromAssets() async {
     try {
-      final result = await rootBundle.loadString('assets/welcome.note');
+      final result = await rootBundle.loadString('assets/welcome.json');
       final doc = NotusDocument.fromJson(jsonDecode(result));
       setState(() {
         _controller = ZefyrController(doc);
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _save() async {
     const fs = LocalFileSystem();
-    final file = fs.directory(_settings.assetsPath).childFile('welcome.note');
+    final file = fs.directory(_settings.assetsPath).childFile('welcome.json');
     final data = jsonEncode(_controller.document);
     await file.writeAsString(data);
   }

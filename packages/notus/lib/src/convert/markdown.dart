@@ -4,9 +4,9 @@
 
 import 'dart:convert';
 
+import 'package:markdown/markdown.dart' as markdown;
 import 'package:notus/notus.dart';
 import 'package:quill_delta/quill_delta.dart';
-
 class NotusMarkdownCodec extends Codec<Delta, String> {
   const NotusMarkdownCodec();
 
@@ -17,6 +17,8 @@ class NotusMarkdownCodec extends Codec<Delta, String> {
   @override
   Converter<Delta, String> get encoder => _NotusMarkdownEncoder();
 }
+
+
 
 class _NotusMarkdownEncoder extends Converter<Delta, String> {
   static const kBold = '**';
