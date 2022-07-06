@@ -107,6 +107,7 @@ class ZefyrController extends ChangeNotifier {
 
   void formatText(int index, int length, NotusAttribute attribute) {
     final change = document.format(index, length, attribute);
+    print("formatText = $change");
     // _lastChangeSource = ChangeSource.local;
     const source = ChangeSource.local;
 

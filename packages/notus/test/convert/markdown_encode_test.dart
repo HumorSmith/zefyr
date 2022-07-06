@@ -32,7 +32,7 @@ void main() {
           ..insert(' is a ')
           ..insert('circus', attribute.toJson())
           ..insert('\n');
-
+        print("delta = $delta");
         final result = notusMarkdown.encode(delta);
         expect(result, expected);
       }

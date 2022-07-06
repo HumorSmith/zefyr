@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
         _controller = ZefyrController(doc);
       });
     } catch (error) {
+      print('_loadFromAssets error='+error);
       final doc = NotusDocument()..insert(0, 'Empty asset');
       setState(() {
         _controller = ZefyrController(doc);
