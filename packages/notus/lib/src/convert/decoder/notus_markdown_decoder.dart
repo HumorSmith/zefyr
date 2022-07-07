@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:markdown/markdown.dart';
 import 'package:notus/src/convert/decoder/base_decoder.dart';
 import 'package:notus/src/convert/decoder/block_decoder/code_decoder.dart';
+import 'package:notus/src/convert/decoder/block_decoder/list_decoder.dart';
 import 'package:notus/src/convert/decoder/inline_decoder/italic_decoder.dart';
 import 'package:notus/src/convert/decoder/inline_decoder/strike_decoder.dart';
 import 'package:notus/src/convert/decoder/inline_decoder/strong_decoder.dart';
@@ -12,17 +13,18 @@ import 'package:quill_delta/quill_delta.dart';
 import 'inline_decoder/heading_decoder.dart';
 
 class NotusMarkdownDecoder extends Converter<String, Delta> {
-  List<BaseDecoder<Element>> decoders = [
+  List<BaseDecoder<Element>> inlineDecoders = [
     StrongDecoder(),
     HeadingDecoder(),
     ItalicDecoder(),
     StrikeDecoder(),
-    CodeDecoder()
   ];
+
+  List<BaseDecoder<Element>> blockDecoders = [CodeDecoder(), ListDecoder()];
 
   @override
   Delta convert(String input) {
-    var nodes = markdownToNodes(input,extensionSet: ExtensionSet.gitHubWeb);
+    var nodes = markdownToNodes(input, extensionSet: ExtensionSet.gitHubWeb);
     Delta delta = Delta();
     fillNodes(nodes, delta);
     return delta;
@@ -34,38 +36,49 @@ class NotusMarkdownDecoder extends Converter<String, Delta> {
         TextDecoder().fill(delta, nodes[i] as Text);
         continue;
       }
-      bool isMatch = false;
       var element = nodes[i] as Element;
       print('tag = ${element.tag}  content = ${element.textContent}');
-      for (var decoder in decoders) {
-        if (decoder.tryMatch(element)) {
-          decoder.fill(delta, element);
+      bool isMatch = false;
+
+      for (var blockDecoder in blockDecoders) {
+        if (blockDecoder.tryMatch(element)) {
+          blockDecoder.fill(delta, element);
+          isMatch = true;
+        }
+      }
+
+      if (isMatch) {
+        continue;
+      }
+
+      for (var inlineDecoder in inlineDecoders) {
+        if (inlineDecoder.tryMatch(element)) {
+          inlineDecoder.fill(delta, element);
           isMatch = true;
           continue;
         }
       }
-      if(isMatch){
+      if (isMatch) {
         continue;
       }
       if (element.children != null && element.children!.isNotEmpty) {
         fillNodes(element.children!, delta);
       }
-
     }
   }
 
   List<Node> markdownToNodes(
-      String markdown, {
-        Iterable<BlockSyntax> blockSyntaxes = const [],
-        Iterable<InlineSyntax> inlineSyntaxes = const [],
-        ExtensionSet? extensionSet,
-        Resolver? linkResolver,
-        Resolver? imageLinkResolver,
-        bool inlineOnly = false,
-        bool encodeHtml = true,
-        bool withDefaultBlockSyntaxes = true,
-        bool withDefaultInlineSyntaxes = true,
-      }) {
+    String markdown, {
+    Iterable<BlockSyntax> blockSyntaxes = const [],
+    Iterable<InlineSyntax> inlineSyntaxes = const [],
+    ExtensionSet? extensionSet,
+    Resolver? linkResolver,
+    Resolver? imageLinkResolver,
+    bool inlineOnly = false,
+    bool encodeHtml = true,
+    bool withDefaultBlockSyntaxes = true,
+    bool withDefaultInlineSyntaxes = true,
+  }) {
     final document = Document(
       blockSyntaxes: blockSyntaxes,
       inlineSyntaxes: inlineSyntaxes,
@@ -86,6 +99,4 @@ class NotusMarkdownDecoder extends Converter<String, Delta> {
 
     return nodes;
   }
-
-
 }
