@@ -7,12 +7,14 @@ import 'dart:convert';
 import 'package:markdown/markdown.dart' as markdown;
 import 'package:notus/notus.dart';
 import 'package:quill_delta/quill_delta.dart';
+
+import 'decoder/notus_markdown_decoder.dart';
 class NotusMarkdownCodec extends Codec<Delta, String> {
   const NotusMarkdownCodec();
 
   @override
   Converter<String, Delta> get decoder =>
-      throw UnimplementedError('Decoding is not implemented yet.');
+      NotusMarkdownDecoder();
 
   @override
   Converter<Delta, String> get encoder => _NotusMarkdownEncoder();

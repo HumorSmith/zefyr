@@ -59,6 +59,11 @@ void main() {
       assert(third.data == 'cpp');
     });
 
+    test('underline', (){
+      var delta = NotusMarkdownDecoder().convert('<u>下划线文本</u>');
+      print('delta = $delta');
+    });
+
     test('ul', () {
       var delta = NotusMarkdownDecoder().convert('- java\n- cpp\n- python');
       print('delta = $delta');
@@ -72,14 +77,6 @@ void main() {
       assert(third.data == 'cpp');
     });
 
-    // test('underline',(){
-    //   var delta =
-    //   NotusMarkdownDecoder().convert('++hello++');
-    //   assert(delta.first.isInsert);
-    //   assert(delta.first.data == 'hello');
-    //   assert(delta.first.attributes!['i']);
-    //   print('italic delta = $delta');
-    // });
 
     test('ol', () {
       var delta = NotusMarkdownDecoder().convert('1. hello');
