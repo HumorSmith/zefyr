@@ -140,14 +140,14 @@ void main() {
       expect(result, expectedMarkdown);
     });
 
-
     test('underline', () {
       var delta = Delta();
-      delta.insert('下划线',NotusAttribute.underline.toJson());
+      delta
+        ..insert('underline', NotusAttribute.underline.toJson())
+        ..insert('\n');
       final result = notusMarkdown.encode(delta);
-      print('result = $result');
+      expect(result, '<u>underline</u>\n\n');
     });
-
   });
 }
 

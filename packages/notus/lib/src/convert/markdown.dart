@@ -9,22 +9,21 @@ import 'package:notus/notus.dart';
 import 'package:quill_delta/quill_delta.dart';
 
 import 'decoder/notus_markdown_decoder.dart';
+
 class NotusMarkdownCodec extends Codec<Delta, String> {
   const NotusMarkdownCodec();
 
   @override
-  Converter<String, Delta> get decoder =>
-      NotusMarkdownDecoder();
+  Converter<String, Delta> get decoder => NotusMarkdownDecoder();
 
   @override
   Converter<Delta, String> get encoder => _NotusMarkdownEncoder();
 }
 
-
-
 class _NotusMarkdownEncoder extends Converter<Delta, String> {
   static const kBold = '**';
   static const kItalic = '_';
+  static const kUnderline = '<u>';
   static final kSimpleBlocks = <NotusAttribute, String>{
     NotusAttribute.bq: '> ',
     NotusAttribute.ul: '* ',
@@ -173,6 +172,8 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
       _writeHeadingTag(buffer, attribute as NotusAttribute<int>);
     } else if (attribute?.key == NotusAttribute.block.key) {
       _writeBlockTag(buffer, attribute as NotusAttribute<String>, close: close);
+    } else if (attribute?.key == NotusAttribute.underline.key) {
+      _writeUnderlineTag(buffer,close: close);
     } else {
       throw ArgumentError('Cannot handle $attribute');
     }
@@ -192,6 +193,15 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
       buffer.write('](${link.value})');
     } else {
       buffer.write('[');
+    }
+  }
+
+  void _writeUnderlineTag(StringBuffer buffer,
+      {bool close = false}) {
+    if (close) {
+      buffer.write('</u>');
+    } else {
+      buffer.write(kUnderline);
     }
   }
 
