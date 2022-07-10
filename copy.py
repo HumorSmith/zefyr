@@ -33,7 +33,7 @@ def replaceFolder(srcFolder, destFolder):
 
 
 if __name__ == '__main__':
-    copyFodler("packages/notus", notus)
-    copyFodler("packages/markdown", markdown)
-    copyFodler("packages/zefyr", zefyr)
-    copyFodler("packages/flutter_markdown", flutter_markdown)
+    replaceFolder("packages/notus", notus)
+    replaceFolder("packages/markdown", markdown)
+    replaceFolder("packages/zefyr", zefyr)
+    replaceFolder("packages/flutter_markdown", flutter_markdown)
