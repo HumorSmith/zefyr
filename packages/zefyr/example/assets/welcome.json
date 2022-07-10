@@ -28,6 +28,34 @@
     }
   },
   {
+    "insert": "序号1"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "ol"
+    }
+  },
+  {
+    "insert": "序号2"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "ol"
+    }
+  },
+
+  {
+    "insert": "序号3"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "ol"
+    }
+  },
+  {
     "insert": "这是结尾.\n"
   }
 

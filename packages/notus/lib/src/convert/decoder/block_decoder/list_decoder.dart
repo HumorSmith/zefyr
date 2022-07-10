@@ -13,11 +13,9 @@ class ListDecoder extends BaseDecoder<Element> {
     for (int i = 0; i < children.length; i++) {
       delta.insert(children[i].textContent);
       if (input.tag == 'ol') {
-        delta.insert(
-            '${children[i].textContent}\n', NotusAttribute.ol.toJson());
+        delta.insert('\n', NotusAttribute.ol.toJson());
       } else {
-        delta.insert(
-            '${children[i].textContent}\n', NotusAttribute.ul.toJson());
+        delta.insert('\n', NotusAttribute.ul.toJson());
       }
     }
   }

@@ -49,23 +49,29 @@ void main() {
     test('ol', () {
       var delta = NotusMarkdownDecoder().convert('1. java\n2. cpp\n3. python');
       print('delta = $delta');
-      assert(delta.first.isInsert);
-      assert(delta.first.data == 'java');
+      var first = delta.first;
+      assert(first.isInsert);
+      assert(first.data == 'java');
       var second = delta.toList()[1];
       assert(second.isInsert);
+      assert(second.data == '\n');
       assert(second.attributes!['block'] == 'ol');
-      var third = delta.toList()[2];
-      assert(third.isInsert);
-      assert(third.data == 'cpp');
+
+      first = delta.toList()[2];
+      assert(first.isInsert);
+      assert(first.data == 'cpp');
+      second = delta.toList()[3];
+      assert(second.data == '\n');
+      assert(second.attributes!['block'] == 'ol');
     });
 
-    test('underline', (){
+    test('underline', () {
       var delta = NotusMarkdownDecoder().convert('<u>下划线文本</u>');
       print('delta = $delta');
     });
 
     test('ul', () {
-      var delta = NotusMarkdownDecoder().convert('- java\n- cpp\n- python');
+      var delta = NotusMarkdownDecoder().convert('- java\n- cpp\n- python\n');
       print('delta = $delta');
       assert(delta.first.isInsert);
       assert(delta.first.data == 'java');
@@ -77,9 +83,8 @@ void main() {
       assert(third.data == 'cpp');
     });
 
-
     test('ol', () {
-      var delta = NotusMarkdownDecoder().convert('1. hello');
+      var delta = NotusMarkdownDecoder().convert('1. hello\n2.java');
       print('delta = $delta');
     });
   });
