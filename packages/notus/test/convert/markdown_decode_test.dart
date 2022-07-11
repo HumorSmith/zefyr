@@ -87,5 +87,10 @@ void main() {
       var delta = NotusMarkdownDecoder().convert('1. hello\n2.java');
       print('delta = $delta');
     });
+
+    test('check', () {
+      var delta = NotusMarkdownDecoder().convert('- [ ] data\n- [x] data');
+      print('check delta = $delta');
+    });
   });
 }

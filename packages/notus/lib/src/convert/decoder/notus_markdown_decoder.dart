@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:markdown/markdown.dart';
 import 'package:notus/src/convert/decoder/base_decoder.dart';
+import 'package:notus/src/convert/decoder/block_decoder/check_list_decoder.dart';
 import 'package:notus/src/convert/decoder/block_decoder/code_decoder.dart';
 import 'package:notus/src/convert/decoder/block_decoder/list_decoder.dart';
 import 'package:notus/src/convert/decoder/inline_decoder/italic_decoder.dart';
@@ -20,7 +21,7 @@ class NotusMarkdownDecoder extends Converter<String, Delta> {
     StrikeDecoder(),
   ];
 
-  List<BaseDecoder<Element>> blockDecoders = [CodeDecoder(), ListDecoder()];
+  List<BaseDecoder<Element>> blockDecoders = [CodeDecoder(), ListDecoder(),CheckListDecoder()];
 
   @override
   Delta convert(String input) {
