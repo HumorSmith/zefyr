@@ -71,6 +71,26 @@
       "block": "ol"
     }
   },
+
+  {
+    "insert": "todo1"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "cl"
+    }
+  },
+
+  {
+    "insert": "todo1"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "cl"
+    }
+  },
   {
     "insert": "这是结尾.\n"
   }

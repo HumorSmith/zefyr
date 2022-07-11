@@ -3,8 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:markdown/markdown.dart' as markdown;
+import 'package:notus/convert.dart';
 import 'package:notus/notus.dart';
 import 'package:quill_delta/quill_delta.dart';
 
@@ -24,6 +26,9 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
   static const kBold = '**';
   static const kItalic = '_';
   static const kUnderline = '<u>';
+  static const kUnchecked = '- [ ] ';
+  static const kChecked = '- [x] ';
+
   static final kSimpleBlocks = <NotusAttribute, String>{
     NotusAttribute.bq: '> ',
     NotusAttribute.ul: '* ',
@@ -52,6 +57,9 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
         buffer.write(currentBlockLines.join('\n'));
         _writeAttribute(buffer, blockStyle, close: true);
         buffer.writeln();
+      } else if (blockStyle == NotusAttribute.cl) {
+        _writeAttribute(buffer, blockStyle);
+        buffer.write(currentBlockLines.join('\n'));
       } else {
         for (var line in currentBlockLines) {
           _writeBlockTag(buffer, blockStyle);
@@ -117,6 +125,19 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
 
   String _writeLine(String text, NotusStyle style) {
     var buffer = StringBuffer();
+
+    if (style.contains(NotusAttribute.cl)) {
+      var attrMap = style.toJson();
+      var checked = attrMap!['checked'];
+      if (checked == null || !checked) {
+        buffer.write(kUnchecked);
+      } else {
+        buffer.write(kChecked);
+      }
+      buffer.write(text);
+      return buffer.toString();
+    }
+
     if (style.contains(NotusAttribute.heading)) {
       _writeAttribute(buffer, style.get<int>(NotusAttribute.heading));
     }
@@ -171,9 +192,11 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
     } else if (attribute?.key == NotusAttribute.heading.key) {
       _writeHeadingTag(buffer, attribute as NotusAttribute<int>);
     } else if (attribute?.key == NotusAttribute.block.key) {
+      if(attribute!= null && attribute.value == NotusAttribute.cl.value){
+        return;
+      }
+      var notusStyle = NotusStyle.fromJson(attribute?.toJson());
       _writeBlockTag(buffer, attribute as NotusAttribute<String>, close: close);
-    } else if (attribute?.key == NotusAttribute.underline.key) {
-      _writeUnderlineTag(buffer,close: close);
     } else {
       throw ArgumentError('Cannot handle $attribute');
     }

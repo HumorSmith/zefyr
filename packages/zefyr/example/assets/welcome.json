@@ -8,7 +8,6 @@
       "heading": 1
     }
   },
-
   {
     "insert": "粗体",
     "attributes": {
@@ -22,9 +21,36 @@
     }
   },
   {
-    "insert": "删除线",
+    "insert": "删除线\n",
     "attributes": {
       "s": true
+    }
+  },
+  {
+    "insert": "The \"expands\" property cannot be used when \"scrollable\" is set to false"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "ul"
+    }
+  },
+  {
+    "insert": "Java"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "ul"
+    }
+  },
+  {
+    "insert": "python"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "ul"
     }
   },
   {
@@ -45,18 +71,27 @@
       "block": "ol"
     }
   },
-
   {
-    "insert": "序号3"
+    "insert": "todo1"
   },
   {
     "insert": "\n",
     "attributes": {
-      "block": "ol"
+      "block": "cl",
+      "checked": true
+    }
+  },
+  {
+    "insert": "todo1"
+  },
+  {
+    "insert": "\n",
+    "attributes": {
+      "block": "cl",
+      "checked": true
     }
   },
   {
     "insert": "这是结尾.\n"
   }
-
 ]

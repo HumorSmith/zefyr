@@ -148,6 +148,20 @@ void main() {
       final result = notusMarkdown.encode(delta);
       expect(result, '<u>underline</u>\n\n');
     });
+    test('check', () {
+      var map = NotusAttribute.cl.toJson();
+      map['checked'] = true;
+      var delta = Delta()
+        ..insert('data')
+        ..insert('\n',map );
+      map['checked'] = false;
+      delta.insert('data2');
+      delta.insert('\n',map);
+      var markdown = notusMarkdown.encode(delta);
+      expect(markdown,'- [x] data\n- [ ] data2\n');
+      print('check markdown = $markdown');
+
+    });
   });
 }
 
