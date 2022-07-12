@@ -157,8 +157,10 @@ void main() {
       map['checked'] = false;
       delta.insert('data2');
       delta.insert('\n',map);
+      delta.insert('data2');
+      delta.insert('\n',map);
       var markdown = notusMarkdown.encode(delta);
-      expect(markdown,'- [x] data\n- [ ] data2\n');
+      expect(markdown,'- [x] data\n- [ ] data2\n- [ ] data2\n');
       print('check markdown = $markdown');
 
     });

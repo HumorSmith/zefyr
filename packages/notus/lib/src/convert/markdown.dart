@@ -125,8 +125,7 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
 
   String _writeLine(String text, NotusStyle style) {
     var buffer = StringBuffer();
-
-    if (style.contains(NotusAttribute.cl)) {
+    if (style.containsSame(NotusAttribute.cl)) {
       var attrMap = style.toJson();
       var checked = attrMap!['checked'];
       if (checked == null || !checked) {
