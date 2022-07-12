@@ -153,16 +153,60 @@ void main() {
       map['checked'] = true;
       var delta = Delta()
         ..insert('data')
-        ..insert('\n',map );
+        ..insert('\n', map);
       map['checked'] = false;
       delta.insert('data2');
-      delta.insert('\n',map);
+      delta.insert('\n', map);
       delta.insert('data2');
-      delta.insert('\n',map);
+      delta.insert('\n', map);
       var markdown = notusMarkdown.encode(delta);
-      expect(markdown,'- [x] data\n- [ ] data2\n- [ ] data2\n');
+      expect(markdown, '- [x] data\n- [ ] data2\n- [ ] data2\n');
       print('check markdown = $markdown');
+    });
 
+    test('test multi markdown', () {
+      var content = r'''[
+  {
+    "insert": "B",
+    "attributes": {
+      "b": true
+    }
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "insert": "I",
+    "attributes": {
+      "i": true
+    }
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "insert": "U",
+    "attributes": {
+      "u": true
+    }
+  },
+  {
+    "insert": "\n"
+  },
+  {
+    "insert": "T",
+    "attributes": {
+      "s": true
+    }
+  },
+  {
+    "insert": "\n"
+  }
+]''';
+      var document = NotusDocument.fromJson(jsonDecode(content));
+      var originMarkdown = const NotusMarkdownCodec()
+          .encode(document.toDelta())
+          .replaceAll('\n\n', '\n');
     });
   });
 }

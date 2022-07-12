@@ -28,6 +28,7 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
   static const kUnderline = '<u>';
   static const kUnchecked = '- [ ] ';
   static const kChecked = '- [x] ';
+  static const kStrikethrough = '~~';
 
   static final kSimpleBlocks = <NotusAttribute, String>{
     NotusAttribute.bq: '> ',
@@ -190,7 +191,12 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
       _writeLinkTag(buffer, attribute as NotusAttribute<String>, close: close);
     } else if (attribute?.key == NotusAttribute.heading.key) {
       _writeHeadingTag(buffer, attribute as NotusAttribute<int>);
-    } else if (attribute?.key == NotusAttribute.block.key) {
+    }else if(attribute?.key == NotusAttribute.underline.key){
+      _writeUnderlineTag(buffer, close: close);
+    }else if(attribute?.key == NotusAttribute.strikethrough.key){
+      _writeStrikeThroughTag(buffer);
+    }
+    else if (attribute?.key == NotusAttribute.block.key) {
       if(attribute!= null && attribute.value == NotusAttribute.cl.value){
         return;
       }
@@ -207,6 +213,10 @@ class _NotusMarkdownEncoder extends Converter<Delta, String> {
 
   void _writeItalicTag(StringBuffer buffer) {
     buffer.write(kItalic);
+  }
+
+  void _writeStrikeThroughTag(StringBuffer buffer) {
+    buffer.write(kStrikethrough);
   }
 
   void _writeLinkTag(StringBuffer buffer, NotusAttribute<String> link,

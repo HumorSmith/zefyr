@@ -92,5 +92,12 @@ void main() {
       var delta = NotusMarkdownDecoder().convert('- [ ] data\n- [x] data');
       print('check delta = $delta');
     });
+
+    test('not block test', () {
+      String markdown = '# 一级\n**加粗**\n~~删除~~';
+      var delta = NotusMarkdownDecoder().convert(markdown);
+      assert(delta.first.isInsert);
+      assert(delta.first.data == '一级');
+    });
   });
 }
