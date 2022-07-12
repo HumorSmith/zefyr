@@ -26,6 +26,6 @@ class CheckListDecoder extends BaseDecoder<Element> {
 
   @override
   bool tryMatch(Element input) {
-    return input.tag == 'li';
+    return input.tag == 'li' && input.attributes['class'] == 'task-list-item';
   }
 }
