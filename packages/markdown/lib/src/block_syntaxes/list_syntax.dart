@@ -9,7 +9,7 @@ import 'block_syntax.dart';
 
 class ListItem {
   ListItem(this.lines);
-
+  bool isChecked = false;
   bool forceBlock = false;
   final List<String> lines;
 }
@@ -58,11 +58,13 @@ abstract class ListSyntax extends BlockSyntax {
     final items = <ListItem>[];
     var childLines = <String>[];
     final isCheckboxListSubclass =
-        (listTag == 'ol_with_checkbox' || listTag == 'ul_with_checkbox');
+    (listTag == 'ol_with_checkbox' || listTag == 'ul_with_checkbox');
 
-    void endItem() {
+    void endItem(bool isChecked) {
       if (childLines.isNotEmpty) {
-        items.add(ListItem(childLines));
+        final listItem = ListItem(childLines);
+        listItem.isChecked = isChecked;
+        items.add(listItem);
         childLines = <String>[];
       }
     }
@@ -80,8 +82,9 @@ abstract class ListSyntax extends BlockSyntax {
     int? startNumber;
 
     while (!parser.isDone) {
+      var isChecked = false;
       final leadingSpace =
-          _whitespaceRe.matchAsPrefix(parser.current)!.group(0)!;
+      _whitespaceRe.matchAsPrefix(parser.current)!.group(0)!;
       final leadingExpandedTabLength = _expandedTabLength(leadingSpace);
       if (tryMatch(emptyPattern)) {
         if (emptyPattern.hasMatch(parser.next ?? '')) {
@@ -100,8 +103,8 @@ abstract class ListSyntax extends BlockSyntax {
         // Horizontal rule takes precedence to a new list item.
         break;
       } else if ((isCheckboxListSubclass &&
-              (tryMatch(ulWithCheckBoxPattern) ||
-                  tryMatch(olWithCheckBoxPattern))) ||
+          (tryMatch(ulWithCheckBoxPattern) ||
+              tryMatch(olWithCheckBoxPattern))) ||
           tryMatch(ulPattern) ||
           tryMatch(olPattern)) {
         // We know we have a valid [possibleMatch] now, so capture it.
@@ -110,7 +113,6 @@ abstract class ListSyntax extends BlockSyntax {
         // [olWithCheckBoxPattern]) have 2 extra capturing groups at the 5
         // position to capture the checkbox. These shift the other groups
         // forward by 2 slots.
-        final cbGroupOffset = isCheckboxListSubclass ? 2 : 0;
         final precedingWhitespace = successfulMatch[1]!;
         final digits = successfulMatch[2] ?? '';
         if (startNumber == null && digits.isNotEmpty) {
@@ -118,7 +120,6 @@ abstract class ListSyntax extends BlockSyntax {
         }
         final marker = successfulMatch[3]!;
         // [checkBoxIndicator] is always empty unless a checkbox was found.
-        String checkBoxIndicator = '';
         if (isCheckboxListSubclass) {
           // Look at checkbox capture group and get checkbox state.
           // If we find a checked or unchecked checkbox then we will
@@ -128,14 +129,14 @@ abstract class ListSyntax extends BlockSyntax {
           // listitem li node.
           final String checkboxGroup = successfulMatch[5]!.toLowerCase();
           if (checkboxGroup == '[ ]') {
-            checkBoxIndicator = indicatorForUncheckedCheckBox;
+            isChecked = false;
           } else if (checkboxGroup == '[x]') {
-            checkBoxIndicator = indicatorForCheckedCheckBox;
+            isChecked = true;
           }
         }
-        final firstWhitespace = successfulMatch[5 + cbGroupOffset] ?? '';
-        final restWhitespace = successfulMatch[6 + cbGroupOffset] ?? '';
-        final content = successfulMatch[7 + cbGroupOffset] ?? '';
+        final firstWhitespace = successfulMatch[5 ] ?? '';
+        final restWhitespace = successfulMatch[6 ] ?? '';
+        final content = successfulMatch[7 ] ?? '';
         final isBlank = content.isEmpty;
         if (listMarker != null && listMarker != marker) {
           // Changing the bullet or ordered list delimiter starts a new list.
@@ -164,8 +165,7 @@ abstract class ListSyntax extends BlockSyntax {
               restWhitespace;
         }
         // End the current list item and start a new one.
-        endItem();
-        childLines.add('$checkBoxIndicator$restWhitespace$content');
+        childLines.add('$restWhitespace$content');
       } else if (BlockSyntax.isAtBlockEnd(parser)) {
         // Done with the list.
         break;
@@ -180,10 +180,10 @@ abstract class ListSyntax extends BlockSyntax {
         // Anything else is paragraph continuation text.
         childLines.add(parser.current);
       }
+      endItem(isChecked);
       parser.advance();
     }
 
-    endItem();
     final itemNodes = <Element>[];
 
     items.forEach(_removeLeadingEmptyLine);
@@ -199,13 +199,11 @@ abstract class ListSyntax extends BlockSyntax {
       Element? checkboxToInsert;
       if (isCheckboxListSubclass) {
         if (children.isNotEmpty) {
-          if (children.first.textContent
-              .startsWith(indicatorForCheckedCheckBox)) {
+          if (item.isChecked) {
             checkboxToInsert = Element.withTag('input')
               ..attributes['type'] = 'checkbox'
               ..attributes['checked'] = 'true';
-          } else if (children.first.textContent
-              .startsWith(indicatorForUncheckedCheckBox)) {
+          } else {
             checkboxToInsert = Element.withTag('input')
               ..attributes['type'] = 'checkbox';
           }
