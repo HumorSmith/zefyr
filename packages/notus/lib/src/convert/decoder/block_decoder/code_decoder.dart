@@ -6,7 +6,14 @@ import 'package:quill_delta/quill_delta.dart';
 class CodeDecoder extends BaseDecoder<Element>{
   @override
   void fill(Delta delta, Element input) {
-    delta.insert(input.textContent,NotusAttribute.code.toJson());
+    int len = input.textContent.length;
+    String isLineSep = input.textContent.substring(len-1,len);
+    if(isLineSep == '\n'){
+      delta.insert(input.textContent.substring(0,len-1));
+    }else{
+      delta.insert(input.textContent);
+    }
+    delta.insert('\n',NotusAttribute.code.toJson());
   }
 
   @override

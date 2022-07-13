@@ -43,7 +43,7 @@ void main() {
       var delta = NotusMarkdownDecoder().convert('```\nhello world\n```');
       print('code delta = $delta');
       assert(delta.first.isInsert);
-      assert(delta.first.data == 'hello world\n');
+      assert(delta.first.data == 'hello world');
     });
 
     test('ol', () {
@@ -98,6 +98,30 @@ void main() {
       var delta = NotusMarkdownDecoder().convert(markdown);
       assert(delta.first.isInsert);
       assert(delta.first.data == '一级');
+    });
+
+    test('code', () {
+      String markdown = '```java\nhello world\n```';
+      var delta = NotusMarkdownDecoder().convert(markdown);
+      print('code delta = $delta');
+    });
+
+    test('test wrong', () {
+      String markdown = r'''1. o1
+1. o2
+1. o3
+* u1
+* u2
+* u3
+- [ ]  c1
+- [ ]  c2
+- [ ]  c3
+```
+java is number 1
+```''';
+      var delta = NotusMarkdownDecoder().convert(markdown);
+      print('delta = $delta');
+      print(delta.toJson().toString());
     });
   });
 }
