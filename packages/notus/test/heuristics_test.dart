@@ -13,18 +13,20 @@ final ul = NotusAttribute.ul.toJson();
 final h1 = NotusAttribute.h1.toJson();
 
 void main() {
+  final heuristics = NotusHeuristics(
+    formatRules: NotusHeuristics.fallback.formatRules,
+    insertRules: NotusHeuristics.fallback.insertRules,
+    deleteRules: NotusHeuristics.fallback.deleteRules,
+  );
+  final doc = dartconfDoc();
+
   group('$NotusHeuristics', () {
     test('ensures heuristics are applied', () {
-      final doc = dartconfDoc();
-      final heuristics = NotusHeuristics(
-        formatRules: [],
-        insertRules: [],
-        deleteRules: [],
-      );
 
-      expect(() {
-        heuristics.applyInsertRules(doc, 0, 'a');
-      }, throwsStateError);
+
+      // expect(() {
+      //   print('applyInsertRules = $applyInsertRules');
+      // }, throwsStateError);
 
       expect(() {
         heuristics.applyDeleteRules(doc, 0, 1);
@@ -34,5 +36,10 @@ void main() {
         heuristics.applyFormatRules(doc, 0, 1, NotusAttribute.bold);
       }, throwsStateError);
     });
+  },);
+  test('test bold', () {
+    var boldText = '**haha**';
+    var applyInsertRules = heuristics.applyInsertRules(doc, doc.length+boldText.length, boldText);
+    print('applyInsertRules = $applyInsertRules');
   });
 }

@@ -58,12 +58,14 @@ class ZefyrController extends ChangeNotifier {
   /// Optionally updates selection if provided.
   void replaceText(int index, int length, Object data,
       {TextSelection? selection}) {
+    print('document replaceText index = $index length = $length data = $data');
     assert(data is String || data is EmbeddableObject);
     Delta? delta;
 
     final isDataNotEmpty = data is String ? data.isNotEmpty : true;
     if (length > 0 || isDataNotEmpty) {
       delta = document.replace(index, length, data);
+      print('document replaceText delta = $delta');
       // If the delta is an insert operation and we have toggled
       // some styles, then apply those styles to the inserted text.
       if (toggledStyles.isNotEmpty &&
@@ -75,6 +77,7 @@ class ZefyrController extends ChangeNotifier {
           ..retain(index)
           ..retain(dataLength, toggledStyles.toJson());
         document.compose(retainDelta, ChangeSource.local);
+        print('document replaceText compose ${document.toDelta()}');
       }
     }
 

@@ -212,7 +212,9 @@ class AutoExitBlockRule extends InsertRule {
     // therefore we can exit this block.
     final attributes = target.attributes ?? <String, dynamic>{};
     attributes.addAll(NotusAttribute.block.unset.toJson());
-    return Delta()..retain(index)..retain(1, attributes);
+    return Delta()
+      ..retain(index)
+      ..retain(1, attributes);
   }
 }
 
@@ -336,10 +338,14 @@ class ForceNewlineForInsertsAroundEmbedRule extends InsertRule {
     if (cursorBeforeEmbed || cursorAfterEmbed) {
       final delta = Delta()..retain(index);
       if (cursorBeforeEmbed && !data.endsWith('\n')) {
-        return delta..insert(data)..insert('\n');
+        return delta
+          ..insert(data)
+          ..insert('\n');
       }
       if (cursorAfterEmbed && !data.startsWith('\n')) {
-        return delta..insert('\n')..insert(data);
+        return delta
+          ..insert('\n')
+          ..insert(data);
       }
       return delta..insert(data);
     }
@@ -424,7 +430,9 @@ class PreserveBlockStyleOnInsertRule extends InsertRule {
       result.retain(nextNewline.skippedLength!);
       final opText = nextNewline.op!.data as String;
       final lf = opText.indexOf('\n');
-      result..retain(lf)..retain(1, resetStyle);
+      result
+        ..retain(lf)
+        ..retain(1, resetStyle);
     }
 
     return result;
@@ -492,10 +500,49 @@ class InsertEmbedsRule extends InsertRule {
 }
 
 /// Replaces certain Markdown shortcuts with actual line or block styles.
+class MarkdownInlineInsertRule extends InsertRule {
+  static final rules = <String, NotusAttribute>{
+    '~~': NotusAttribute.strikethrough,
+    '**': NotusAttribute.bold,
+  };
+
+  const MarkdownInlineInsertRule();
+
+  @override
+  Delta? apply(Delta document, int index, Object data) {
+    final iter = DeltaIterator(document);
+    final preOp = iter.skip(index);
+    print('MarkdownInlineInsertRule preOp = $preOp');
+    if (preOp == null) {
+      return null;
+    }
+    if (preOp is String) {
+      return null;
+    }
+    String plainText = preOp.data as String;
+    if (plainText.startsWith('\n')) {
+      plainText = plainText.split('\n').last;
+    }
+    for (var entry in rules.entries) {
+      if (plainText.startsWith(entry.key) &&
+          plainText.endsWith(entry.key) &&
+          plainText != entry.key) {
+        String realData = plainText.replaceAll(entry.key, '');
+        print('realData = $realData');
+        return Delta()
+          ..retain(index - plainText.length)
+          ..insert(realData, entry.value.toJson())
+          ..delete(plainText.length);
+      }
+    }
+    return null;
+  }
+}
+
+/// Replaces certain Markdown shortcuts with actual line or block styles.
 class MarkdownBlockShortcutsInsertRule extends InsertRule {
   static final rules = <String, NotusAttribute>{
     '-': NotusAttribute.block.bulletList,
-    '*': NotusAttribute.block.bulletList,
     '1.': NotusAttribute.block.numberList,
     '[]': NotusAttribute.block.checkList,
     "'''": NotusAttribute.block.code,
@@ -505,6 +552,7 @@ class MarkdownBlockShortcutsInsertRule extends InsertRule {
     '##': NotusAttribute.h2,
     '###': NotusAttribute.h3,
   };
+
   const MarkdownBlockShortcutsInsertRule();
 
   String? _getLinePrefix(DeltaIterator iter, int index) {

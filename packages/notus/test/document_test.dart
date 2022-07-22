@@ -34,8 +34,15 @@ void main() {
         ..retain(5)
         ..insert('\n');
       expect(() {
-        NotusDocument.fromJson(jsonDecode(jsonEncode(badDelta)));
+        var notusDocument = NotusDocument.fromJson(jsonDecode(jsonEncode(badDelta)));
+        print(notusDocument);
       }, throwsArgumentError);
+    });
+
+    test('test retain', (){
+      final doc = NotusDocument();
+      var delta = doc.toDelta()..insert('hello world')..retain(15,NotusAttribute.bold.toJson());
+      print('delta = $delta');
     });
 
     test('empty document contains single empty line', () {
@@ -113,6 +120,8 @@ void main() {
       expect(doc.root.children.first, const TypeMatcher<BlockNode>());
     });
 
+
+
     test('format ignores empty changes', () async {
       final doc = dartconfDoc();
       var changeList = doc.changes.toList();
@@ -122,6 +131,7 @@ void main() {
       expect(change, isEmpty);
       expect(changes, isEmpty);
     });
+
 
     test('format returns actual change delta', () {
       final doc = dartconfDoc();
@@ -229,6 +239,9 @@ void main() {
       expect(line.style.get(NotusAttribute.heading), NotusAttribute.h1);
       expect(line.toPlainText(), 'DartConf Los Angeles\n');
     });
+
+
+
 
     test('delete applies heuristic rules', () {
       final doc = dartconfDoc();

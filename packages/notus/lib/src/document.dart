@@ -105,6 +105,7 @@ class NotusDocument {
   ///
   /// Returns an instance of [Delta] actually composed into this document.
   Delta insert(int index, Object data) {
+    print('document insert index = $index data = $data');
     assert(index >= 0);
     if (data is String) {
       if (data.isEmpty) return Delta();
@@ -141,6 +142,7 @@ class NotusDocument {
   ///
   /// Returns an instance of [Delta] actually composed into this document.
   Delta replace(int index, int length, Object data) {
+    print('document replace index = $index length = $length data = $data');
     assert(data is String || data is EmbeddableObject);
 
     final dataIsNotEmpty = (data is String) ? data.isNotEmpty : true;
